@@ -10,7 +10,8 @@
 		  border-radius: 30px;
 		}
 		body{
-			background: url(back.jpg) repeat;
+			/* background: url("{{ url_for('static', filename='tan_engine/back.jpg') }}") repeat; */
+			background: url("game/static/tan_engine/back.jpg") repeat;
 		}
 
 	</style>
@@ -22,7 +23,7 @@
 	</canvas>
 </div>
 
-	<script src="{{ url_for('static', filename='tan_engine/jquery-3.3.1.min.js') }}"></script>
+	<script src="{{ url_for('engine.static', filename='tan_engine/jquery-3.3.1.min.js') }}"></script>
 	<!-- <script src="jquery-3.3.1.min.js"></script> -->
 
 	<script>
@@ -392,12 +393,12 @@
 				game.execScript();
 			},
 			imgs: {
-				'ch1': "{{ url_for('static', filename='tan_engine/ch_giselle1.png') }}",
-				'ch2': "{{ url_for('static', filename='tan_engine/ch_vel1.png') }}",
-				'ch2_big': "{{ url_for('static', filename='tan_engine/ahhhh.png') }}",
-				'sc1': "{{ url_for('static', filename='tan_engine/sc_room.jpg') }}",
-				'sc2': "{{ url_for('static', filename='tan_engine/sc_kitchen.jpg') }}",
-				'end': "{{ url_for('static', filename='tan_engine/the_end.png') }}"
+				'ch1': "{{ url_for('engine.static', filename='tan_engine/ch_giselle1.png') }}",
+				'ch2': "{{ url_for('engine.static', filename='tan_engine/ch_vel1.png') }}",
+				'ch2_big': "{{ url_for('engine.static', filename='tan_engine/ahhhh.png') }}",
+				'sc1': "{{ url_for('engine.static', filename='tan_engine/sc_room.jpg') }}",
+				'sc2': "{{ url_for('engine.static', filename='tan_engine/sc_kitchen.jpg') }}",
+				'end': "{{ url_for('engine.static', filename='tan_engine/the_end.png') }}"
 			}
 
 			// imgs: {
@@ -417,7 +418,8 @@
 		['say',{'char':'Джизель', 'text':'Что? Как вы оказались в визуальной новелле? Что за вздор? Лучше послушайте что я вам скажу.'}],
 		['say',{'char':'Джизель', 'text':'Увы, наш движок пока многого не умеет. Например, музыку пока не завезли, как и анимацию.'}],
 		['say',{'char':'Джизель', 'text':'А? Что?! Постойте, как убраться из вашего дома?! Пусть наш движок еще пока и не идеален, он уже достаточно мощный чтобы городо нести имя "Движок для визуальных новел"!'}],
-		['say',{'char':'Джизель', 'text':'Пройдем на кухню, там пройдет основная презентация :)'}],
+		['say',{'char':'Джизель', 'text':'Давай решим задачу :)'}],
+		['py_ex','1'],
 		['label','l1'],
 		['menu',[
 				{'text':'Согласится', 'to':'l3'},
@@ -428,6 +430,7 @@
 		['to','l1'],
 		['label','l3'],
 		['scene',{'img':'sc2'}],
+
 		['char',{'img':'ch1', 'position':'left'}],
 		['say',{'char':'Джизель', 'text':'Вот мы и очутились на кухне. Не впечатлило?'}],
 		['say',{'char':'Джизель', 'text':'Тогда я готова вам продемонстрировать кое-что по настоящему интересное.'}],
@@ -444,7 +447,11 @@
 		['scene',{'img':'end'}],
 	];
 	var game = new TanEngine('#canvas',options, script);
+
+	var data = {'script':'script1'};
 		$.ajax({
+			data:data,
+			method:'POST',
 			dataType: 'json',
 		  url: 'http://192.168.1.171:5000/ajax_test/',
 		  success: function(){

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <div>
+        <a href="{{ url_for('index') }}">На главную</a>
+        <a href="{{ url_for('game_view') }}">В игру</a>
+        {% if current_user.is_anonymous %}
+        <a href="{{ url_for('login') }}">Войти</a>
+        {% else %}
+        <a href="{{ url_for('logout') }}">Выйти</a>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </div>
+  </body>
+</html>
