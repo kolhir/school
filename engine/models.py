@@ -4,7 +4,7 @@ from users.models import User
 class scene(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True, unique=True)
-    script = db.Column(db.PickleType)
+    script = db.Column(db.Text)
     exp_threesold = db.Column(db.Integer)
 
 class exercise(db.Model):
