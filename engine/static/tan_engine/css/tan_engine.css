@@ -1,0 +1,41 @@
+.screen {
+  width: max-content;
+  margin: 0 auto; 
+  border: 4px double black;
+  border-radius: 30px;
+}
+
+.bubble{
+	margin-left:auto;
+	margin-right:auto;
+	border: 4px double black;
+	border-radius: 20px;
+	background: linear-gradient(to top left, powderblue, pink);
+	opacity: 0.9;
+	overflow:hidden;
+}
+.bubble-content{
+	display: block;
+	margin: 20px;
+	overflow-y:scroll;
+	box-sizing: border-box;
+}
+.bubble-content::-webkit-scrollbar {
+  width: 10px;
+  position: 100px;
+}
+
+/* Track */
+.bubble-content::-webkit-scrollbar-track {
+  background: #f1f1f155; 
+}
+
+/* Handle */
+.bubble-content::-webkit-scrollbar-thumb {
+  background: #8885; 
+}
+
+/* Handle on hover */
+.bubble-content::-webkit-scrollbar-thumb:hover {
+  background: #5555; 
+}			
