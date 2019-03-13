@@ -85,21 +85,16 @@
 			['say',{'char':'Джузеппо', 'color':'blue', 'text':'Никто...'}],
 			['scene',{'img':'end'}],
 	]};
-
-	var game = new TanEngine(options);
-	game.start(script);
-
-	var data = {'script':'script1'};
-		$.ajax({
-			data:data,
-			method:'POST',
-			dataType: 'json',
-		  url: 'http://192.168.1.171:5000/ajax_test/',
-		  success: function(){
-
-			alert('Пизда!!!');
-		  }
-		});
+	$.ajax({
+		data:data,
+		method:'POST',
+		dataType: 'json',
+		url: 'http://192.168.1.171:5000/ajax_test/',
+		success: function(data){
+			var game = new TanEngine(options);
+			game.start(data[data]);
+		}
+	});
 	</script>
 
 </body>
