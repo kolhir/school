@@ -18,12 +18,9 @@
 	</canvas>
 </div>
 
-
-	<!-- <script src="jquery-3.3.1.min.js"></script> -->
-
 	<script>
 
-	
+
 	var options={
 		//настройки полотна
 		canvas:{
@@ -58,7 +55,7 @@
 			['say',{'char':'незнакомка', 'text':'Доброе утро, меня зовут Джизель. Я пришла к вам домой для демонстрации нашего нового движка для визуальных новел.'}],
 			['say',{'char':'Джизель', 'text':'А? Что?! Постойте, как убраться из вашего дома?! Пусть наш движок еще пока и не идеален, он уже достаточно мощный чтобы городо нести имя "Движок для визуальных новел"!'}],
 			['say',{'char':'Джизель', 'text':'Пройдем на кухню, там пройдет основная презентация :)'}],
-			['send_request',{'url':'http://www.volpi.ru', 
+			['send_request',{'url':'http://www.volpi.ru',
 				'method':'GET',
 				'data':null}],
 			['label','l1'],
@@ -91,7 +88,7 @@
 	game.start(script);
 
 	var data = {'script':'script1'};
-		$.ajax({
+	$.ajax({
 			data:data,
 			method:'POST',
 			dataType: 'json',
