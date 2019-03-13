@@ -2,18 +2,13 @@
 <meta charset="UTF-8">
 <html>
 <head>
-	<style>
-		.screen {
-		  width: max-content;
-		  margin: 0 auto;
-		  border: 4px double black;
-		  border-radius: 30px;
-		}
+	<link rel="stylesheet" type="text/css" href="{{ url_for('engine.static', filename='tan_engine/css/tan_engine.css') }}">
+	<script src="{{ url_for('engine.static', filename='tan_engine/js/jquery-3.3.1.min.js') }}"></script>
+	<script src="{{ url_for('engine.static', filename='tan_engine/js/tan_engine.js') }}"></script>
+	<style type="text/css">
 		body{
-			/* background: url("{{ url_for('static', filename='tan_engine/back.jpg') }}") repeat; */
-			background: url("game/static/tan_engine/back.jpg") repeat;
+			background: url({{ url_for('engine.static', filename='tan_engine/back.jpg') }}) repeat;
 		}
-
 	</style>
 </head>
 <body>
@@ -23,358 +18,12 @@
 	</canvas>
 </div>
 
-	<script src="{{ url_for('engine.static', filename='tan_engine/jquery-3.3.1.min.js') }}"></script>
+
 	<!-- <script src="jquery-3.3.1.min.js"></script> -->
 
 	<script>
 
-	/*
-	* метод вывода текста
-	*/
-	function printAt(context, text, x, y, fitWidth,  lineHeight)
-	{
-		if(text!=null){
-			fitWidth = fitWidth || 0;
-
-			if (fitWidth <= 0)
-			{
-				 context.fillText( text, x, y );
-				return;
-			}
-
-			for (var idx = 1; idx <= text.length; idx++)
-			{
-				var str = text.substr(0, idx);
-				//console.log(str, context.measureText(str).width, fitWidth);
-				if (context.measureText(str).width > fitWidth)
-				{
-					context.fillText( text.substr(0, idx-1), x, y );
-					printAt(context, text.substr(idx-1), x, y + lineHeight, fitWidth,  lineHeight);
-					return;
-				}
-			}
-			context.fillText( text, x, y );
-		}
-	}
-	/*
-	* Класс выводящий кнопку на канву, и обрабатывающий нажатия
-	*/
-	function Button(options){
-		let self = this;
-		self.onclick=options['onclick'];
-		self.isEnable = true;
-		self.isVisible = true;
-		let x = options['x'];
-		let y = options['y'];
-		let w = options['w'];
-		let h = options['h'];
-		self.text = options.text;
-		canvas = options.canvas;
-		let canX = canvas.offset().left;
-		let canY = canvas.offset().top;
-
-		function canClick(event) {
-			if(isHover(event.clientX-canX, event.clientY-canY)){
-				self.onclick({
-					'target':self,
-					'x': event.clientX,
-					'y': event.clientY
-				});
-			}
-		}
-		function isHover(mx,my){
-			if(self.isEnable && mx>x && mx<(x+w) && my>y && my<(y+h)){
-				return true;
-			}
-			return false;
-		}
-		canvas.bind('click', canClick);
-		canvas.bind('mousemove', function(event) {
-			if(self.isEnable && self.isVisible){
-				if(isHover(event.clientX-canX, event.clientY-canY)){
-					var ctx = canvas[0].getContext("2d");
-					ctx.fillStyle = "#999";
-					ctx.fillRect(x, y, w, h);
-					ctx.fillStyle = "black";
-					ctx.font = "12px Arial";
-					printAt(ctx, self.text, x, y+15, w, 15);
-				}else{
-					var ctx = canvas[0].getContext("2d");
-					ctx.fillStyle = "#555";
-					ctx.fillRect(x, y, w, h);
-					ctx.fillStyle = "black";
-					ctx.font = "12px Arial";
-					printAt(ctx, self.text, x, y+15, w, 15);
-				}
-			}
-		});
-		self.delete = function(){
-			canvas.unbind('click', canClick);
-		}
-		self.draw = function (){
-			if(self.isVisible){
-				var ctx = canvas[0].getContext("2d");
-				ctx.fillStyle = "#555";
-				ctx.fillRect(x, y, w, h);
-				ctx.fillStyle = "black";
-				ctx.font = "12px Arial";
-				printAt(ctx, self.text, x, y+15, w, 15);
-			}
-		}
-	}
-
-	/*
-	* Класс для изображения элиментов интерфейса
-	*/
-	function TanInterface(options, tanEngine){
-		let self = this;
-		self.itmes ={};
-		initiate();
-		//инициация интерфейса
-		function initiate(){
-			p=40;
-			m=20;
-			width = options['canvas']['width']-p*2;
-			height = options['bubble']['height'];
-			x = p;
-			y = options['canvas']['height']-(height+p);
-			let nextBtnOpt={
-				'text':'',
-				'x':x,
-				'y':y,
-				'w':width,
-				'h':height,
-				'canvas': options['canvas']['canvas'],
-				'onclick': function(){
-					tanEngine.execScript();
-				}
-			}
-			self.itmes['nextBtn']=new Button(nextBtnOpt);
-			self.itmes['nextBtn'].isVisible = false;
-		}
-		// вывод интерфейса на канву
-		self.show = function(){
-			for(item in self.itmes){
-				item.draw()
-			}
-		}
-		self.disable = function(){
-			for(item in self.itmes){
-				item.isEnable=false;
-			}
-		}
-		self.enable = function(){
-			for(item in self.itmes){
-				item.isEnable=false;
-			}
-		}
-	}
-	/*
-	* Класс движка. Инкапсулирует в себе все компоненты игры и обрабатывает их.
-	*/
-	function TanEngine(selector, options, script){
-		let canvas = $(selector);
-		let scriptStr = 0;
-		let self = this;
-		//событие которое происходит на загрузку ресурса
-		let onImgResourcesLoad=options['resources']['onResourcesLoad'];
-		//канва на которую рисуем
-
-		//записываем настройки
-		self.canvasOpt = options['canvas'];
-		self.bubbleOpt = options['bubble'];
-		//загрузим изображения
-		self.imgResources={};
-		loadImages(options['resources']['imgs'])
-		//текущая сцена
-		self.sceneImg;
-		//метки для перехода
-		let labels = {};
-		//меню
-		let menu=[];
-		initiateMenu();
-
-		self.interface = new TanInterface(options, self);
-
-		//персонажи
-		var chars = {'left':null, 'center':null, 'right':null};
-
-		canvas.attr('width',self.canvasOpt['width']);
-		canvas.attr('height',self.canvasOpt['height']);
-		self.context = canvas[0].getContext("2d");
-
-		self.context.fillStyle = self.canvasOpt['color'];
-		self.context.fillRect(0, 0, self.canvasOpt['width'], self.canvasOpt['height']);
-
-		function drawCharacter(animation = 'none'){
-			let context = self.context;
-			let canvasOpt = self.canvasOpt;
-			let bubbleOpt = self.bubbleOpt;
-
-
-			if(chars['left']!=null){
-				img = self.imgResources[chars['left']];
-				let imgWidth = img.width;
-				let imgHeight = img.height;
-				let offY = canvasOpt['height']-imgHeight;
-				offX = canvasOpt['width']*0.02;
-				context.drawImage(img,offX, offY);
-			}
-
-			if(chars['center']!=null){
-				img = self.imgResources[chars['center']];
-				let imgWidth = img.width;
-				let imgHeight = img.height;
-				let offY = canvasOpt['height']-imgHeight;
-				offX = canvasOpt['width']*0.5 - imgWidth*0.5;
-				context.drawImage(img,offX, offY);
-			}
-
-			if(chars['right']!=null){
-				img = self.imgResources[chars['right']];
-				let imgWidth = img.width;
-				let imgHeight = img.height;
-				let offY = canvasOpt['height']-imgHeight;
-				offX = canvasOpt['width']*0.98 - imgWidth;
-				context.drawImage(img,offX, offY);
-			}
-
-
-		}
-		function drawScene(filter='none',animation = 'none'){
-			sceneImg = self.imgResources[self.sceneImg];
-			if(sceneImg!=null){
-				self.context.drawImage(sceneImg,0,0);
-			}
-		}
-		function drawNextButton(){
-
-			nextBtn.draw()
-		}
-		function charSay(character, text){
-			//padding
-			p=40;
-			m=20;
-			context = self.context;
-			width = self.canvasOpt['width']-p*2;
-			height = self.bubbleOpt['height'];
-			context.font = "15px Arial";
-
-			x = p;
-			y = self.canvasOpt['height']-(height+p);
-
-			var grd = context.createLinearGradient(x,y, width, height);
-			grd.addColorStop(0, "#8Af");
-			grd.addColorStop(1, "#fff");
-			context.fillStyle = grd;
-			context.fillRect(x,y, width, height);
-			context.fillStyle = 'black';
-			context.rect(x,y, width, height);
-			context.stroke();
-			context.fillStyle = 'red';
-			printAt(context, character, x+p,y+p, width-p,  height-p);
-			context.fillStyle = 'black';
-			printAt(context, text, x+p,y+p*2, width-p*2, 20);
-			context.font = "12px Arial";
-		}
-		//грузит изображения
-		function loadImages(imgs){
-			countOfUnloaded=Object.keys(imgs).length;
-			for(var imgName in imgs){
-				self.imgResources[imgName] = new Image();
-				self.imgResources[imgName].src = imgs[imgName];
-				self.imgResources[imgName].onload= function (){
-					countOfUnloaded--;
-					if(countOfUnloaded==0){
-						onImgResourcesLoad(self);
-					}
-				}
-			}
-		}
-		//переход к метке
-		function goTo(label){
-			if(labels[label]!=null){
-				scriptStr = labels[label];
-			}else{
-				for(i=script.length-1; i>=0; i--){
-					if(script[i][0]=='label'){
-						let tmpLabel = script[i][1];
-						labels[tmpLabel]=i;
-						if( tmpLabel == label){
-							scriptStr = i;
-							i = 0;
-						}
-					}
-				}
-			}
-		}
-
-
-		function initiateMenu(){
-			let btnOpt={
-				'text':menu['text'],
-				'x':self.canvasOpt['width']*0.05,
-				'y':100,
-				'w':self.canvasOpt['width']*0.9,
-				'h':40,
-				'canvas': canvas,
-			}
-			for(let i = 0; i<6; i++){
-				menu.push(new Button(btnOpt));
-				menu[i].isEnable=false;
-				btnOpt.y+=60;
-			}
-
-		}
-		function showMenu(items){
-			for(let i = 0; i<items.length; i++){
-				menu[i].onclick= function (){
-					//заблокируем все кнопки меню
-					for(let i = 0; i<6; i++){
-						menu[i].isEnable=false;
-					}
-					goTo(items[i]['to']);
-					self.execScript();
-				};
-				menu[i].text = items[i].text;
-				menu[i].isEnable=true;
-				menu[i].draw();
-			}
-		}
-		self.execScript = function (){
-			for(scriptStr; scriptStr<script.length;scriptStr++){
-				instruction = script[scriptStr][0];
-				cmd = script[scriptStr][1];
-				switch(instruction){
-					case 'char':{
-						chars[cmd['position']] = cmd['img'];
-					}break;
-					case 'scene':{
-						self.sceneImg = cmd['img'];
-						chars={};
-					}break;
-					case 'say':{
-						charSay(cmd['char'], cmd['text']);
-						scriptStr++;
-						return;
-					}break;
-					case 'menu':{
-						showMenu(cmd);
-						return;
-					}break;
-					case 'to':{
-						goTo(cmd)
-					}break;
-					case 'label':{
-						labels[cmd] = scriptStr;
-					}break;
-				}
-				drawScene();
-				drawCharacter();
-				self.interface.show;
-			}
-		}
-	}
+	
 	var options={
 		//настройки полотна
 		canvas:{
@@ -389,64 +38,57 @@
 		},
 		//ресурсы
 		resources:{
-			onResourcesLoad: function(game){
-				game.execScript();
-			},
-			imgs: {
-				'ch1': "{{ url_for('engine.static', filename='tan_engine/ch_giselle1.png') }}",
-				'ch2': "{{ url_for('engine.static', filename='tan_engine/ch_vel1.png') }}",
-				'ch2_big': "{{ url_for('engine.static', filename='tan_engine/ahhhh.png') }}",
-				'sc1': "{{ url_for('engine.static', filename='tan_engine/sc_room.jpg') }}",
-				'sc2': "{{ url_for('engine.static', filename='tan_engine/sc_kitchen.jpg') }}",
-				'end': "{{ url_for('engine.static', filename='tan_engine/the_end.png') }}"
-			}
-
-			// imgs: {
-			// 	'ch1': 'ch_giselle1.png',
-			// 	'ch2': 'ch_vel1.png',
-			// 	'ch2_big': 'ahhhh.png',
-			// 	'sc1': 'sc_room.jpg',
-			// 	'sc2': 'sc_kitchen.jpg',
-			// 	'end': 'the_end.png'
-			// }
 		}
 	};
-	script = [
-		['scene',{'img':'sc1'}],
-		['char',{'img':'ch1', 'position':'center'}],
-		['say',{'char':'незнакомка', 'text':'Доброе утро, меня зовут Джизель. Я пришла к вам домой для демонстрации нашего нового движка для визуальных новел.'}],
-		['say',{'char':'Джизель', 'text':'Что? Как вы оказались в визуальной новелле? Что за вздор? Лучше послушайте что я вам скажу.'}],
-		['say',{'char':'Джизель', 'text':'Увы, наш движок пока многого не умеет. Например, музыку пока не завезли, как и анимацию.'}],
-		['say',{'char':'Джизель', 'text':'А? Что?! Постойте, как убраться из вашего дома?! Пусть наш движок еще пока и не идеален, он уже достаточно мощный чтобы городо нести имя "Движок для визуальных новел"!'}],
-		['say',{'char':'Джизель', 'text':'Давай решим задачу :)'}],
-		['py_ex','1'],
-		['label','l1'],
-		['menu',[
-				{'text':'Согласится', 'to':'l3'},
-				{'text':'Отказать', 'to':'l2'}
-		]],
-		['label','l2'],
-		['say',{'char':'Джизель', 'text':'Да не ломайся ты!'}],
-		['to','l1'],
-		['label','l3'],
-		['scene',{'img':'sc2'}],
 
-		['char',{'img':'ch1', 'position':'left'}],
-		['say',{'char':'Джизель', 'text':'Вот мы и очутились на кухне. Не впечатлило?'}],
-		['say',{'char':'Джизель', 'text':'Тогда я готова вам продемонстрировать кое-что по настоящему интересное.'}],
-		['say',{'char':'Джизель', 'text':'Для этого мне понадобится помощь моей ассистентки.'}],
-		['say',{'char':'Джизель', 'text':'Джузеппо!!!'}],
-		['char',{'img':'ch2', 'position':'right'}],
-		['say',{'char':'Джузеппо', 'text':'Вызывали?'}],
-		['say',{'char':'Джизель', 'text':'Передаю слово тебе, Джузеппо.'}],
-		['scene',{'img':'sc2'}],
-		['char',{'img':'ch2', 'position':'center'}],
-		['say',{'char':'Джузеппо', 'text':'Короче, либо ты покупаешь движок, либо я убью тебя прямо тут. И никто тебе не поможет.'}],
-		['char',{'img':'ch2_big', 'position':'center'}],
-		['say',{'char':'Джузеппо', 'text':'Никто...'}],
-		['scene',{'img':'end'}],
-	];
-	var game = new TanEngine('#canvas',options, script);
+	script = {
+		'resources':{
+			'imgs': {
+				'ch1': '{{url_for("engine.static",filename="tan_engine/ch_giselle1.png")}}',
+				'ch2': '{{url_for("engine.static",filename="tan_engine/ch_vel1.png")}}',
+				'ch2_big': '{{url_for("engine.static",filename="tan_engine/ahhhh.png")}}',
+				'sc1': '{{url_for("engine.static",filename="tan_engine/sc_room.jpg")}}',
+				'sc2': '{{url_for("engine.static",filename="tan_engine/sc_kitchen.jpg")}}',
+				'end': '{{url_for("engine.static",filename="tan_engine/the_end.png")}}'
+			}
+		},
+		'script':[
+			['scene',{'img':'sc1'}],
+			['char',{'img':'ch1', 'position':'center'}],
+			['say',{'char':'незнакомка', 'text':'Доброе утро, меня зовут Джизель. Я пришла к вам домой для демонстрации нашего нового движка для визуальных новел.'}],
+			['say',{'char':'Джизель', 'text':'А? Что?! Постойте, как убраться из вашего дома?! Пусть наш движок еще пока и не идеален, он уже достаточно мощный чтобы городо нести имя "Движок для визуальных новел"!'}],
+			['say',{'char':'Джизель', 'text':'Пройдем на кухню, там пройдет основная презентация :)'}],
+			['send_request',{'url':'http://www.volpi.ru', 
+				'method':'GET',
+				'data':null}],
+			['label','l1'],
+			['menu',[
+					{'text':'Согласится', 'to':'l3'},
+					{'text':'Отказать', 'to':'l2'}
+			]],
+			['label','l2'],
+			['say',{'char':'Джизель', 'text':'Да не ломайся ты!'}],
+			['to','l1'],
+			['label','l3'],
+			['scene',{'img':'sc2'}],
+			['char',{'img':'ch1', 'position':'left'}],
+			['say',{'char':'Джизель', 'text':'Вот мы и очутились на кухне. Не впечатлило?'}],
+			['say',{'char':'Джизель', 'text':'Тогда я готова вам продемонстрировать кое-что по настоящему интересное.'}],
+			['say',{'char':'Джизель', 'text':'Для этого мне понадобится помощь моей ассистентки.'}],
+			['say',{'char':'Джизель', 'text':'Джузеппо!!!'}],
+			['char',{'img':'ch2', 'position':'right'}],
+			['say',{'char':'Джузеппо', 'color':'blue', 'text':'Вызывали?'}],
+			['say',{'char':'Джизель', 'text':'Передаю слово тебе, Джузеппо.'}],
+			['scene',{'img':'sc2'}],
+			['char',{'img':'ch2', 'position':'center'}],
+			['say',{'char':'Джузеппо', 'color':'blue', 'text':'Короче, либо ты покупаешь движок, либо я убью тебя прямо тут. И никто тебе не поможет.'}],
+			['char',{'img':'ch2_big', 'position':'center'}],
+			['say',{'char':'Джузеппо', 'color':'blue', 'text':'Никто...'}],
+			['scene',{'img':'end'}],
+	]};
+
+	var game = new TanEngine(options);
+	game.start(script);
 
 	var data = {'script':'script1'};
 		$.ajax({
