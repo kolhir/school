@@ -156,22 +156,11 @@ function TanInterface(options, tanEngine){
 		height = options['bubble']['height'];
 		x = p;
 		y = options['canvas']['height']-(height+p);
-		let nextBtnOpt={
-			'text':'',
-			'x':x,
-			'y':y,
-			'w':width,
-			'h':height,
-			'canvas': options['canvas']['canvas'],
-			'onclick': function(){
-				tanEngine.execScript();
-			}
-		}
+
 		self.items['nextBtn']=new Bubble(options);
 		self.items['nextBtn'].click(function (){
 			tanEngine.execScript();
 		});
-		self.items['nextBtn'].isVisible = false;
 	}
 	// вывод интерфейса на канву
 	self.show = function(){
@@ -199,8 +188,7 @@ function Bubble(options){
 	self.canvasOpt = options['canvas'];
 	self.bubbleOpt = options['bubble'];
 	let p = 20;
-	
-	
+
 	let div = $('<div>')
 		.css('width',self.canvasOpt['width'] -2*p)
 		.css('height',self.bubbleOpt['height']-p)
@@ -235,12 +223,65 @@ function Bubble(options){
 		div.show();
 	}
 	self.print = function(cmd){
+		let color = (cmd['color']?cmd['color']:'red');
+		content.html(cmd['text']);
+		if(color){
+			header.text(cmd['char']).css('color', color);
+		}
+	}
+}
+
+/*
+* Class:: класс для вывода доски с заданием
+*/
+function board(options){
+	let self = this;
+	self.canvasOpt = options['canvas'];
+	self.bubbleOpt = options['bubble'];
+	let p = 20;
+	
+	
+	let div = $('<div>')
+		.css('width',self.canvasOpt['width'] -2*p)
+		.css('height',self.canvasOpt['height']- (self.bubbleOpt['height']+p))
+		.css('margin-top',-self.canvasOpt['height'])
+		.addClass('board').insertAfter(self.canvasOpt['canvas']);
+
+	let header = $('<h4>').css('margin',p).appendTo(div);
+	let height = div.height()-4*p; 
+	let content = $('<div>').addClass('board-content').css('height',height).appendTo(div);
+	
+
+	self.isEnable = true;
+	self.click = function (handler){
+		div.bind('click', handler);
+	}		
+	self.draw = function(){
+		if(self.isEnable)
+		{
+			div.show();
+		}
+		else
+		{
+			div.hide();
+		}
+	}
+	self.disable = function(){
+		self.isEnable = false;
+		div.hide();
+	}
+	self.enable = function(){
+		self.isEnable = true;
+		div.show();
+	}
+	self.print = function(cmd){
 		let color = (cmd['color']?cmd['color']:'red')
 		if(cmd['color']==null)
 		content.html(cmd['text']);
 		header.text(cmd['char']).css('color', color);
 	}
 }
+
 
 /*
 * Класс персонажа
@@ -434,7 +475,16 @@ function TanEngine(options){
 					chars={};
 				}break;
 				case 'say':{
-					self.interface.enable();
+					let items = self.interface.items;
+					items['nextBtn'].enable();
+					charSay(cmd);
+					scriptStr++;
+					return;
+				}break;
+				case 'board':{
+					let items = self.interface.items;
+					items['nextBtn'].enable();
+					items['board'].enable();
 					charSay(cmd);
 					scriptStr++;
 					return;
@@ -458,6 +508,7 @@ function TanEngine(options){
 			if(castomInstuctions!=null && castomInstuctions[instruction]!=null){
 				castomInstuctions[instruction](cmd,self);
 			}
+			self.interface.disable();
 			drawScene();
 			drawCharacter();
 			self.interface.show();

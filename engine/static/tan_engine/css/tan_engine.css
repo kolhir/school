@@ -20,22 +20,37 @@
 	overflow-y:scroll;
 	box-sizing: border-box;
 }
-.bubble-content::-webkit-scrollbar {
+.board{
+	margin-left:auto;
+	margin-right:auto;
+	border: 4px double black;
+	border-radius: 20px;
+	background: #3f4754;
+	overflow:hidden;
+}
+.board-content{
+	display: block;
+	margin: 20px;
+	overflow-y:scroll;
+	box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
   width: 10px;
   position: 100px;
 }
 
 /* Track */
-.bubble-content::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
   background: #f1f1f155; 
 }
 
 /* Handle */
-.bubble-content::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
   background: #8885; 
 }
 
 /* Handle on hover */
-.bubble-content::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover {
   background: #5555; 
 }			
