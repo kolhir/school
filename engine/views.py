@@ -3,6 +3,33 @@ from flask import render_template, flash, redirect, url_for,request
 from flask_login import login_required
 import json
 import  pickle
+from .models import get_scene_by_id, get_exercise_by_id
+# data = {"command":"scene","id":2};
+# data = {"command":"exercise","id":4};
+# На это рыжий кидает код(опять же еще одна команда)
+# data = {"command":"code","id":4, "text": (сам код)};
+
+
+@app.route("/game/command/", methods = ['POST'])
+def ajax_command():
+    command = get_command_from_request(request)
+
+    if command == "scene":
+        id = get_id_from_request(request)
+        scene = get_scene_by_id(id)
+        return scene.script
+
+    elif command == "exercise":
+        id = get_id_from_request(request)
+        exercise = get_exercise_by_id(id)
+        exercise_json = fill_ex_tamplate(exercise)
+        print(exercise_json)
+        return exercise_json
+
+    elif command == "code":
+        id = get_id_from_request(request)
+        print("code ID ======== ", id)
+
 
 @app.route("/game/ajax_test/", methods=['GET', 'POST'])
 def ajax():
@@ -44,48 +71,25 @@ def create_scene():
                 exp_threesold = 1)
     db.session.add(s)
     db.session.commit()
-d = """{
-    "resources":{
-        "imgs": {
-            "ch1": "/game/static/tan_engine/ch_giselle1.png",
-            "ch2": "/game/static/tan_engine/ch_vel1.png",
-            "ch2_big": "/game/static/tan_engine/ahhhh.png",
-            "sc1": "/game/static/tan_engine/sc_room.jpg",
-            "sc2": "/game/static/tan_engine/sc_kitchen.jpg",
-            "end": "/game/static/tan_engine/the_end.png"
-        }
-    },
-    "script":[
-        ["scene",{"img":"sc1"}],
-        ["char",{"img":"ch1", "position":"center"}],
-        ["say",{"char":"незнакомка", "text":"Доброе утро, меня зовут Джизель. Я пришла к вам домой для демонстрации нашего нового движка для визуальных новел."}],
-        ["say",{"char":"Джизель", "text":"А? Что?! Постойте, как убраться из вашего дома?! Пусть наш движок еще пока и не идеален, он уже достаточно мощный чтобы городо нести имя Движок для визуальных новел!"}],
-        ["say",{"char":"Джизель", "text":"Пройдем на кухню, там пройдет основная презентация :)"}],
-        ["send_request",{"url":"http://www.volpi.ru",
-            "method":"GET",
-            "data":null}],
-        ["label","l1"],
-        ["menu",[
-                {"text":"Согласится", "to":"l3"},
-                {"text":"Отказать", "to":"l2"}
-        ]],
-        ["label","l2"],
-        ["say",{"char":"Джизель", "text":"Да не ломайся ты!"}],
-        ["to","l1"],
-        ["label","l3"],
-        ["scene",{"img":"sc2"}],
-        ["char",{"img":"ch1", "position":"left"}],
-        ["say",{"char":"Джизель", "text":"Вот мы и очутились на кухне. Не впечатлило?"}],
-        ["say",{"char":"Джизель", "text":"Тогда я готова вам продемонстрировать кое-что по настоящему интересное."}],
-        ["say",{"char":"Джизель", "text":"Для этого мне понадобится помощь моей ассистентки."}],
-        ["say",{"char":"Джизель", "text":"Джузеппо!!!"}],
-        ["char",{"img":"ch2", "position":"right"}],
-        ["say",{"char":"Джузеппо", "color":"blue", "text":"Вызывали?"}],
-        ["say",{"char":"Джизель", "text":"Передаю слово тебе, Джузеппо."}],
-        ["scene",{"img":"sc2"}],
-        ["char",{"img":"ch2", "position":"center"}],
-        ["say",{"char":"Джузеппо", "color":"blue", "text":"Короче, либо ты покупаешь движок, либо я убью тебя прямо тут. И никто тебе не поможет."}],
-        ["char",{"img":"ch2_big", "position":"center"}],
-        ["say",{"char":"Джузеппо", "color":"blue", "text":"Никто..."}],
-        ["scene",{"img":"end"}]
-]}"""
+
+def get_command_from_request(request):
+    try:
+        command = request.form["command"]
+        return command
+    except Exception as e:
+        print("Нет команды ========", "Ошибка ", e)
+        return 0
+
+def get_id_from_request(request):
+    try:
+        id = request.form["id"]
+        return id
+    except Exception as e:
+        print("Нет id в запросе, сорян!", e )
+        return False
+
+def fill_ex_tamplate(exercise):
+    ex = "{" + ex_template.format(exercise.name,exercise.text,exercise.io_data,exercise.code) + "}"
+    return ex
+
+ex_template = "\"name\": \"{}\",\"text\": \"{}\",\"io_data\": \"{}\",\"code\": \"{}\""
