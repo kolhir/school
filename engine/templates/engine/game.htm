@@ -1,23 +1,23 @@
-<!DOCTYPE>
-<meta charset="UTF-8">
-<html>
-<head>
-	<link rel="stylesheet" type="text/css" href="{{ url_for('engine.static', filename='tan_engine/css/tan_engine.css') }}">
-	<script src="{{ url_for('engine.static', filename='tan_engine/js/jquery-3.3.1.min.js') }}"></script>
-	<script src="{{ url_for('engine.static', filename='tan_engine/js/tan_engine.js') }}"></script>
-	<style type="text/css">
-		body{
-			background: url({{ url_for('engine.static', filename='tan_engine/back.jpg') }}) repeat;
-		}
-	</style>
-</head>
-<body>
-{% include "engine/code_palette.html" %}
-<div  class='screen'>
-	<canvas id = 'canvas' width="600" height="400"  class='screen'>
-	</canvas>
-</div>
+{% extends "bootstrap/base.html" %}
 
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('engine.static', filename='tan_engine/css/tan_engine.css') }}">
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<style type="text/css">
+	body{
+		background: url({{ url_for('engine.static', filename='tan_engine/back.jpg') }}) repeat;
+	}
+</style>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('engine.static', filename='tan_engine/js/tan_engine.js') }}"></script>
+	
+<script>
 	var options={
 		//настройки полотна
 		canvas:{
@@ -32,18 +32,47 @@
 		},
 		//ресурсы
 		resources:{
+			//асинхронная команда, требует "stop" после
+			"castomInstuctions":{
+				"code":function(cmd,game){
+					data = {"command":"code", "ex":cmd}
+					$.ajax({
+						url: 'http://localhost:5000/game/command/',
+						"method":"post",
+						"dataType":"json",
+						"success":function(data){
+							editor.name.text(data['name']);
+							editor.ex.text(data['text']);
+							editor.setCode(data['code']);
+							editor.show();
+						}
+					});
+				}
+			}
 		}
 	};
-
-
-
+	data = {"command":"scene", "id":1};
+	$.ajax({
 		method:'POST',
+		dataType: 'json',
+		url: 'http://127.0.0.1:5000/game/command/',
 		success: function(data){
 			var game = new TanEngine(options);
-
+			game.start(data);
 		}
 	});
-	</script>
+</script>
 
-</body>
-</html>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ace.js"></script>
+<script src="{{ url_for('engine.static', filename='tan_engine/js/code.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+{% include "engine/code_palette.html" %}
+<div  class='screen'>
+	<canvas id = 'canvas' width="600" height="400"  class='screen'>
+	</canvas>
+</div>
+
+
+{% endblock %}
