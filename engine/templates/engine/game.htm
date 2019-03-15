@@ -41,15 +41,17 @@
 					dataType:'json',
 				  data:data,
 					success:function(data){
-						alert("asdasd")
+						/* alert("asdasd") */
+						/* e = $("#code")
+						e.modal("show"); окно выводит, но функции ниже не сробатывают */
 						editor.name.text(data['name']);
 						editor.ex.text(data['text']);
 						editor.setCode(data['code']);
 						editor.show();
 					},
-					error:function(data){
+					/* error:function(data){
 						alert(data['name'],data['text'],data["code"])
-					}
+					} */
 				});
 			}
 		}

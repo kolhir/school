@@ -93,7 +93,8 @@ def get_id_from_req(request):
 def get_code_from_req():
     pass
 def fill_ex_tamplate(exercise):
-    ex = "{" + ex_template.format(exercise.name,exercise.text,exercise.io_data,exercise.code) + "}"
+    ex = "{" + ex_template.format(exercise.name,exercise.text,exercise.code) + "}"
     return ex
 
-ex_template = "\"name\": \"{}\",\"text\": \"{}\",\"io_data\": \"{}\",\"code\": \"{}\""
+# ex_template = "\"name\": \"{}\",\"text\": \"{}\",\"io_data\": \"{}\",\"code\": \"{}\""
+ex_template = "\"name\": \"{}\",\"text\": \"{}\",\"code\": \"{}\""
