@@ -54,3 +54,8 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #5555; 
 }			
+
+.code-palette{
+	width: 100%;
+	height: 700
+}

@@ -33,4 +33,4 @@ def get_exercise_by_id(id):
     if exercise:
         return exercise
     else:
-        print("db errrrror нет упражнения с таким id")
+        print("db errrrror нет упражнения с таким id = ", id)

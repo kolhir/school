@@ -1,26 +1,23 @@
-<!DOCTYPE>
-<meta charset="UTF-8">
-<html>
-<head>
-	<link rel="stylesheet" type="text/css" href="{{ url_for('engine.static', filename='tan_engine/css/tan_engine.css') }}">
-	<script src="{{ url_for('engine.static', filename='tan_engine/js/jquery-3.3.1.min.js') }}"></script>
-	<script src="{{ url_for('engine.static', filename='tan_engine/js/tan_engine.js') }}"></script>
-	<style type="text/css">
-		body{
-			background: url({{ url_for('engine.static', filename='tan_engine/back.jpg') }}) repeat;
-		}
-	</style>
-</head>
-<body>
+{% extends "bootstrap/base.html" %}
 
-<div  class='screen'>
-	<canvas id = 'canvas' width="600" height="400"  class='screen'>
-	</canvas>
-</div>
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('engine.static', filename='tan_engine/css/tan_engine.css') }}">
 
-	<script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
+<style type="text/css">
+	body{
+		background: url({{ url_for('engine.static', filename='tan_engine/back.jpg') }}) repeat;
+	}
+</style>
+{% endblock %}
 
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('engine.static', filename='tan_engine/js/tan_engine.js') }}"></script>
+
+<script>
 	var options={
 		//настройки полотна
 		canvas:{
@@ -34,25 +31,53 @@
 			height: 200
 		},
 		//ресурсы
-		resources:{
+		"castomInstuctions":{
+			//асинхронная команда, требует "stop" после
+				"code":function(cmd,game){
+				data = {"command":"exercise", "id":"1"}
+				$.ajax({
+					url: 'http://127.0.0.1:5000/game/command/',
+					method:'POST',
+					dataType:'json',
+				  data:data,
+					success:function(data){
+						alert("asdasd")
+						editor.name.text(data['name']);
+						editor.ex.text(data['text']);
+						editor.setCode(data['code']);
+						editor.show();
+					},
+					error:function(data){
+						alert(data['name'],data['text'],data["code"])
+					}
+				});
+			}
 		}
 	};
 
 	data = {"command":"scene","id":2};
 	$.ajax({
 		method:'POST',
+		dataType: 'json',
 		data:data,
 		url: 'http://127.0.0.1:5000/game/command/',
-		dataType:'json',
 		success: function(data){
 			var game = new TanEngine(options);
 			game.start(data);
-		},
-		error: function (error){
-			alert('hui:'+eval(error.status)+':'+error.responseText);
 		}
 	});
-	</script>
+</script>
 
-</body>
-</html>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ace.js"></script>
+<script src="{{ url_for('engine.static', filename='tan_engine/js/code.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+{% include "engine/code_palette.html" %}
+<div  class='screen'>
+	<canvas id = 'canvas' width="600" height="400"  class='screen'>
+	</canvas>
+</div>
+
+
+{% endblock %}

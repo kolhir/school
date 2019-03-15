@@ -21,6 +21,7 @@ def ajax_command():
 
     elif command == "exercise":
         id = get_id_from_req(request)
+        print("========================",id)
         exercise = get_exercise_by_id(id)
         exercise_json = fill_ex_tamplate(exercise)
         print(exercise_json)
@@ -30,7 +31,7 @@ def ajax_command():
         id = get_id_from_req(request)
 
         print("code ID ======== ", id)
-
+        return "{\"1\":\"1\"}"
 
 @app.route("/game/ajax_test/", methods=['GET', 'POST'])
 def ajax():
@@ -89,7 +90,8 @@ def get_id_from_req(request):
         print("Нет id в запросе, сорян!", e )
         return False
 
-def get_code_from_req
+def get_code_from_req():
+    pass
 def fill_ex_tamplate(exercise):
     ex = "{" + ex_template.format(exercise.name,exercise.text,exercise.io_data,exercise.code) + "}"
     return ex
