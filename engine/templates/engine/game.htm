@@ -12,14 +12,11 @@
 	</style>
 </head>
 <body>
-
+{% include "engine/code_palette.html" %}
 <div  class='screen'>
 	<canvas id = 'canvas' width="600" height="400"  class='screen'>
 	</canvas>
 </div>
-
-
-	<!-- <script src="jquery-3.3.1.min.js"></script> -->
 
 	<script>
 
@@ -85,15 +82,17 @@
 			['say',{'char':'Джузеппо', 'color':'blue', 'text':'Никто...'}],
 			['scene',{'img':'end'}],
 	]};
-	$.ajax({
+	data={'id':1};
+/*	$.ajax({
 		method:'POST',
 		dataType: 'json',
-		url: 'http://192.168.1.171:5000/ajax_test/',
+		data: data,
+		url: 'http://127.0.0.1:5000/game/ajax_test/',
 		success: function(data){
 			var game = new TanEngine(options);
 			game.start(data[data]);
 		}
-	});
+	});*/
 	</script>
 
 </body>
