@@ -12,22 +12,23 @@ from .models import get_scene_by_id, get_exercise_by_id
 
 @app.route("/game/command/", methods = ['POST'])
 def ajax_command():
-    command = get_command_from_request(request)
+    command = get_command_from_req(request)
 
     if command == "scene":
-        id = get_id_from_request(request)
+        id = get_id_from_req(request)
         scene = get_scene_by_id(id)
         return scene.script
 
     elif command == "exercise":
-        id = get_id_from_request(request)
+        id = get_id_from_req(request)
         exercise = get_exercise_by_id(id)
         exercise_json = fill_ex_tamplate(exercise)
         print(exercise_json)
         return exercise_json
 
     elif command == "code":
-        id = get_id_from_request(request)
+        id = get_id_from_req(request)
+
         print("code ID ======== ", id)
 
 
@@ -72,7 +73,7 @@ def create_scene():
     db.session.add(s)
     db.session.commit()
 
-def get_command_from_request(request):
+def get_command_from_req(request):
     try:
         command = request.form["command"]
         return command
@@ -80,7 +81,7 @@ def get_command_from_request(request):
         print("Нет команды ========", "Ошибка ", e)
         return 0
 
-def get_id_from_request(request):
+def get_id_from_req(request):
     try:
         id = request.form["id"]
         return id
@@ -88,6 +89,7 @@ def get_id_from_request(request):
         print("Нет id в запросе, сорян!", e )
         return False
 
+def get_code_from_req
 def fill_ex_tamplate(exercise):
     ex = "{" + ex_template.format(exercise.name,exercise.text,exercise.io_data,exercise.code) + "}"
     return ex

@@ -1,5 +1,5 @@
 import telebot
-bot = telebot.TeleBot("617038609:AAHGoE-XotBE4ESrEGCpdj_Uqqy9dImyr40", threaded=False)
+bot = telebot.TeleBot("801072262:AAFLvQJ9q6xxk2BMc5u5t3k5EJCS6wrhdwQ", threaded=False)
 import json
 import requests
 import time
