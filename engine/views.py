@@ -29,8 +29,11 @@ def ajax_command():
 
     elif command == "code":
         id = get_id_from_req(request)
+        code = get_code_from_req(request)
 
+        print("CODE ===========",code)
         print("code ID ======== ", id)
+
         return "{\"1\":\"1\"}"
 
 @app.route("/game/ajax_test/", methods=['GET', 'POST'])
@@ -90,8 +93,14 @@ def get_id_from_req(request):
         print("Нет id в запросе, сорян!", e )
         return False
 
-def get_code_from_req():
-    pass
+def get_code_from_req(request):
+    try:
+        code = request.form["code"]
+        return code
+    except Exception as e:
+        print("нет кода в запросе", e)
+        return False
+
 def fill_ex_tamplate(exercise):
     ex = "{" + ex_template.format(exercise.name,exercise.text,exercise.code) + "}"
     return ex
