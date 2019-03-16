@@ -15,7 +15,7 @@ Bootstrap(app)
 
 login = LoginManager(app)
 login.login_view = 'login'
-from views import index
+from views import indext
 
 from users.blueprint import users
 app.register_blueprint(users, url_prefix = "/")

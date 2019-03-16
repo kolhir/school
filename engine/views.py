@@ -4,6 +4,8 @@ from flask_login import login_required
 import json
 import  pickle
 from .models import get_scene_by_id, get_exercise_by_id
+from config import url, code_template, res_code_template
+import requests
 # data = {"command":"scene","id":2};
 # data = {"command":"exercise","id":4};
 # На это рыжий кидает код(опять же еще одна команда)
@@ -21,26 +23,22 @@ def ajax_command():
 
     elif command == "exercise":
         id = get_id_from_req(request)
-        print("========================",id)
         exercise = get_exercise_by_id(id)
         exercise_json = fill_ex_tamplate(exercise)
-        print(exercise_json)
         return exercise_json
 
     elif command == "code":
-        id = get_id_from_req(request)
+        ex_id = get_id_from_req(request)
         code = get_code_from_req(request)
-
-        print("CODE ===========",code)
-        print("code ID ======== ", id)
-
-        return "{\"1\":\"1\"}"
+        ex = get_exercise_by_id(ex_id)
+        print(ex.io_data)
+        test = go_test_code(code, ex.io_data)
+        return str(test).replace("\'",'\"')
 
 @app.route("/game/ajax_test/", methods=['GET', 'POST'])
 def ajax():
-    print("==============")
     # create_scene()
-    print(  request.form["id"])
+    print(request.form["id"])
     id = request.form["id"]
     from .models import scene
     s = scene.query.filter_by(id = id).first()
@@ -55,27 +53,14 @@ def ajax():
 
     return d
     # return d
+@app.route("/")
+def index():
+    return render_template("engine/game.htm")
 
 @app.route("/game")
 @login_required
 def game_view():
     return render_template("engine/game.htm")
-
-
-def create_scene():
-    from app import db
-    from .models import scene
-    import pickle
-    global d
-    from random import randint
-    names = "test" + str(randint(1,1000))
-    # piklscript = pickle.dumps(d)
-
-    s = scene(id = 4, name = "test2",
-                script = d,
-                exp_threesold = 1)
-    db.session.add(s)
-    db.session.commit()
 
 def get_command_from_req(request):
     try:
@@ -102,8 +87,55 @@ def get_code_from_req(request):
         return False
 
 def fill_ex_tamplate(exercise):
-    ex = "{" + ex_template.format(exercise.name,exercise.text,exercise.code) + "}"
+    ex = "{" + ex_template.format(exercise.id ,exercise.name,exercise.text,exercise.code) + "}"
     return ex
 
+def go_test_code(code, input_io):
+    code_template['Program'] = code
+    import copy
+    res = copy.deepcopy(res_code_template)
+    from ast import literal_eval
+    input_io = literal_eval(input_io)
+
+    if bool(input_io):
+        for item in input_io:
+            code_template['Input'] = item
+            r = requests.post(url, data = code_template)
+            d = json.loads(r.text)
+            if not(d['Errors']):
+                if d['Result'][:len(d['Result'])-1] == input_io[item]:
+                    res["status"] = "success"
+                    print(res)
+                    return res
+                else:
+                    res["error_text"] = "Программа не прошла тесты"
+                    res["status"] = "error"
+                    return res
+            else:
+                res["error_text"] = d['Errors']
+                res["error_text"] = res["error_text"].replace('\"',"$qv")
+                res["error_text"] = res["error_text"].replace("\'","$qv")
+                res["status"] = "error"
+            return(res)
+    else:
+        r = requests.post(url, data = code_template)
+        d = json.loads(r.text)
+        return(d)
 # ex_template = "\"name\": \"{}\",\"text\": \"{}\",\"io_data\": \"{}\",\"code\": \"{}\""
-ex_template = "\"name\": \"{}\",\"text\": \"{}\",\"code\": \"{}\""
+ex_template = "\"id\": \"{}\",\"name\": \"{}\",\"text\": \"{}\",\"code\": \"{}\""
+
+
+# def create_scene():
+#     from app import db
+#     from .models import scene
+#     import pickle
+#     global d
+#     from random import randint
+#     names = "test" + str(randint(1,1000))
+#     # piklscript = pickle.dumps(d)
+#
+#     s = scene(id = 4, name = "test2",
+#                 script = d,
+#                 exp_threesold = 1)
+#     db.session.add(s)
+#     db.session.commit()

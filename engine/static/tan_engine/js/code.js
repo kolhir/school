@@ -36,7 +36,7 @@ function CodeEditor(id){
 		if(str!=null){
 			str=str.replace(/\\n/g, "\n")
 			.replace(/\\t/g, "\t")
-			.replace(/$$qv/g, '"')
+			.replace(/\$qv/g, '"')
 			.replace(/\\'/g, "'");
 		}
 		return str;
