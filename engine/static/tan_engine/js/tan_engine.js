@@ -228,6 +228,12 @@ function Bubble(options){
 		if(color){
 			header.text(cmd['char']).css('color', color);
 		}
+		let codeClickPrevent = function(event){
+			event.preventDefault();
+		}
+		let codeText = div.find('code');
+		codeText.unbind(codeClickPrevent);
+		codeText.bind(codeClickPrevent);
 	}
 }
 

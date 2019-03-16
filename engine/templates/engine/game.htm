@@ -5,13 +5,7 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
 <link rel="stylesheet" type="text/css" href="{{ url_for('engine.static', filename='tan_engine/css/tan_engine.css') }}">
-
-
-<style type="text/css">
-	body{
-		background: url({{ url_for('engine.static', filename='tan_engine/back.jpg') }}) repeat;
-	}
-</style>
+<link rel="stylesheet" type="text/css" href="{{ url_for('engine.static', filename='tan_engine/css/main.css') }}">
 {% endblock %}
 
 {% block scripts %}
@@ -60,8 +54,12 @@
 			}
 		}
 	};
+        {% if current_user.is_anonymous %}
+        data = {"command":"scene","id":1};
+        {% else %}
+        data = {"command":"scene","id":2};
+        {% endif %}
 
-	data = {"command":"scene","id":1};
 	$.ajax({
 		method:'POST',
 		dataType: 'json',
