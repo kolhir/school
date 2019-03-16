@@ -4,7 +4,7 @@ from flask_login import login_required
 import json
 import  pickle
 from .models import get_scene_by_id, get_exercise_by_id
-from config import url, code_template
+from config import url, code_template, res_code_template
 # data = {"command":"scene","id":2};
 # data = {"command":"exercise","id":4};
 # На это рыжий кидает код(опять же еще одна команда)
@@ -32,11 +32,11 @@ def ajax_command():
         ex_id = get_id_from_req(request)
         code = get_code_from_req(request)
         ex = get_exercise_by_id(ex_id)
-        # test = go_python_test(code, dict(ex.io_data))
+        test = go_python_test(code, dict(ex.io_data))
         print("CODE ===========",code)
         print("code ID ======== ", ex_id)
 
-        return "{\"1\":\"1\"}"
+        return test
 
 @app.route("/game/ajax_test/", methods=['GET', 'POST'])
 def ajax():
@@ -63,22 +63,6 @@ def ajax():
 def game_view():
     return render_template("engine/game.htm")
 
-
-def create_scene():
-    from app import db
-    from .models import scene
-    import pickle
-    global d
-    from random import randint
-    names = "test" + str(randint(1,1000))
-    # piklscript = pickle.dumps(d)
-
-    s = scene(id = 4, name = "test2",
-                script = d,
-                exp_threesold = 1)
-    db.session.add(s)
-    db.session.commit()
-
 def get_command_from_req(request):
     try:
         command = request.form["command"]
@@ -104,15 +88,43 @@ def get_code_from_req(request):
         return False
 
 def fill_ex_tamplate(exercise):
-    ex = "{" + ex_template.format(exercise.name,exercise.text,exercise.code) + "}"
+    ex = "{" + ex_template.format(exercise.id ,exercise.name,exercise.text,exercise.code) + "}"
     return ex
 
 def go_test_code(code, input_io):
     data['Program'] = code
-    for item in input_io:
-        data['Intput'] = 0
+    res = res_code_template
+    if bool(input_io):
+        for item in input_io:
+            data['Input'] = item
+            r = requests.post(url, data = code_template)
+            d = json.loads(r.text)
+            if not(d['Errors']):
+                if d['Result'] == input_io[item]:
+                    res["status"] = "success"
+            else:
+                res["error_text"] = d['Errors']
+                res["status"] = "error"
+            return(res)
+    else:
         r = requests.post(url, data = code_template)
         d = json.loads(r.text)
         return(d)
 # ex_template = "\"name\": \"{}\",\"text\": \"{}\",\"io_data\": \"{}\",\"code\": \"{}\""
-ex_template = "\"name\": \"{}\",\"text\": \"{}\",\"code\": \"{}\""
+ex_template = "\"id\": \"{}\",\"name\": \"{}\",\"text\": \"{}\",\"code\": \"{}\""
+
+
+# def create_scene():
+#     from app import db
+#     from .models import scene
+#     import pickle
+#     global d
+#     from random import randint
+#     names = "test" + str(randint(1,1000))
+#     # piklscript = pickle.dumps(d)
+#
+#     s = scene(id = 4, name = "test2",
+#                 script = d,
+#                 exp_threesold = 1)
+#     db.session.add(s)
+#     db.session.commit()
