@@ -7,6 +7,9 @@ function CodeEditor(id){
 	self.name = $("#"+id+"-name");
 	self.ex= $("#"+id+"-ex");
 	results= $("#"+id+"-results");
+	footerBtns = $("#"+id+"-buttons");
+	footerProgress = $("#"+id+"-progress");
+	//footerProgress.hidde();
 	sendBtn = $('#'+id+"-send").bind("click",_sendCode);
 	editor.setTheme("ace/theme/monokai");
 	editor.getSession().setMode("ace/mode/python");
@@ -41,6 +44,7 @@ function CodeEditor(id){
 	function _sendCode(){
 		let data = {"command":"code", "id":self.id,"code":self.getCode()};
 		let outPrfx = '<hr class="bg-light"/>';
+		//footerProgress.show();
 		$.ajax({
 			method:'POST',
 			dataType: 'json',
