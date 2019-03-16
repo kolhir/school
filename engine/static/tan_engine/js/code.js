@@ -9,7 +9,7 @@ function CodeEditor(id){
 	results= $("#"+id+"-results");
 	footerBtns = $("#"+id+"-buttons");
 	footerProgress = $("#"+id+"-progress");
-	//footerProgress.hidde();
+	footerProgress.hide();
 	sendBtn = $('#'+id+"-send").bind("click",_sendCode);
 	editor.setTheme("ace/theme/monokai");
 	editor.getSession().setMode("ace/mode/python");
@@ -23,10 +23,13 @@ function CodeEditor(id){
 		return editor.getValue();
 	}
 	function _specSym(str){
-		return str.replace(/\\n/g, "\n")
+		if(str!=null){
+			str=str.replace(/\\n/g, "\n")
 			.replace(/\\t/g, "\t")
 			.replace(/$$qv/g, '"')
 			.replace(/\\'/g, "'");
+		}
+		return str;
 	}
 	self.setCode=function(code){
 		code = _specSym(code);
@@ -44,7 +47,8 @@ function CodeEditor(id){
 	function _sendCode(){
 		let data = {"command":"code", "id":self.id,"code":self.getCode()};
 		let outPrfx = '<hr class="bg-light"/>';
-		//footerProgress.show();
+		footerProgress.show();
+		footerBtns.hide();
 		$.ajax({
 			method:'POST',
 			dataType: 'json',
@@ -61,6 +65,10 @@ function CodeEditor(id){
 			},
 	 		error:function(data){
 				results.text("Ошибка соединения!");
+			},
+			complete:function(){
+				footerProgress.hide();
+				footerBtns.show();
 			}
 		});
 	}
