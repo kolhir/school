@@ -4,6 +4,10 @@ html{
 body{
 	background: url('../back.jpg') repeat;
 	height: 100%;
+	font-size: 12pt;
+}
+body,.label,.form-control,.btn{
+	font-size: 12pt;
 }
 .center-block{
 	height: 100%

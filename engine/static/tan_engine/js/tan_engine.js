@@ -109,20 +109,24 @@ function Button(options){
 	canvas.bind('click', canClick);
 	canvas.bind('mousemove', function(event) {
 		if(self.isEnable && self.isVisible){
+			
 			if(isHover(event.clientX, event.clientY)){
 				var ctx = canvas[0].getContext("2d");
 				ctx.fillStyle = "#999";
 				ctx.fillRect(x, y, w, h);
 				ctx.fillStyle = "black";
-				ctx.font = "12px Arial";
-				printAt(ctx, self.text, x, y+15, w, 15);
+				ctx.font = "12px Comic Sans MS";
+				ctx.fillStyle = "#FFF";
+				printAt(ctx, self.text, x+20, y+25, w, 15);
 			}else{
+
 				var ctx = canvas[0].getContext("2d");
 				ctx.fillStyle = "#555";
 				ctx.fillRect(x, y, w, h);
 				ctx.fillStyle = "black";
-				ctx.font = "12px Arial";
-				printAt(ctx, self.text, x, y+15, w, 15);
+				ctx.font = "12px Comic Sans MS";
+				ctx.fillStyle = "#FFF";
+				printAt(ctx, self.text, x+20, y+25, w, 15);
 			}
 		}
 	});
@@ -136,7 +140,8 @@ function Button(options){
 			ctx.fillRect(x, y, w, h);
 			ctx.fillStyle = "black";
 			ctx.font = "12px Arial";
-			printAt(ctx, self.text, x, y+15, w, 15);
+			ctx.fillStyle = "#FFF";
+			printAt(ctx, self.text, x+20, y+25, w, 15);
 		}
 	}
 }
@@ -371,7 +376,7 @@ function TanEngine(options){
 			let imgHeight = img.height;
 			let offY = canvasOpt['height']-imgHeight;
 			offX = canvasOpt['width']*0.98 - imgWidth;
-			context.drawImage(img,offX, offY);
+			context.drawImage(img, offX, offY );
 		}
 
 		
