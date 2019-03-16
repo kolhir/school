@@ -20,6 +20,7 @@ function CodeEditor(id){
 		return editor.getValue();
 	}
 	self.setCode=function(code){
+		code = code.replace(/\\n/g, "\n");
 		return editor.setValue(code);
 	}
 	self.show = function(){
@@ -32,7 +33,8 @@ function CodeEditor(id){
 		Отправка запроса для проверки кода.
 	*/
 	function _sendCode(){
-		data = {"command":"code", id:self.id,"code":self.getCode()};
+		let data = {"command":"code", "id":self.id,"code":self.getCode()};
+		let outPrfx = '<hr class="bg-light"/>';
 		$.ajax({
 			method:'POST',
 			dataType: 'json',
@@ -40,10 +42,11 @@ function CodeEditor(id){
 			url: 'http://127.0.0.1:5000/game/command/',
 			success: function(data){
 				if(data['status']=="success"){
-					results.html('<h4>Задача решена успешно, можете закрыть окно</h4>');
+					results.html(outPrfx+'<h4>Задача решена успешно, можете закрыть окно</h4>');
 				}else{
-					let error = data['error']
-					results.html('<h4>Ошибка!</h4><code>'+error+'</code>');
+					let error = data['error'];
+					error = outPrfx+'<h4>Ошибка!</h4><code>'+error+'</code>';
+					results.html(error);
 				}
 			},
 	 		error:function(data){
