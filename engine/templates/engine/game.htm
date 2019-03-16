@@ -48,6 +48,7 @@
 						e.modal("show"); окно выводит, но функции ниже не сробатывают */
 						editor.name.text(data['name']);
 						editor.ex.text(data['text']);
+						editor.id=data['id'];
 						editor.setCode(data['code']);
 						editor.show();
 					},

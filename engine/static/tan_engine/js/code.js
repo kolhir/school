@@ -2,10 +2,12 @@ function CodeEditor(id){
 	let self = this;
 	let editor = ace.edit(id+"-editor");
 	self.editor = editor;
+	//id задания
+	self.id;
 	self.name = $("#"+id+"-name");
 	self.ex= $("#"+id+"-ex");
 	results= $("#"+id+"-results");
-	sendBtn = $('#'+id+"-results").bind('click',_sendCode);
+	sendBtn = $('#'+id+"-send").bind("click",_sendCode);
 	editor.setTheme("ace/theme/monokai");
 	editor.getSession().setMode("ace/mode/python");
 	self.bindSkip = function(event, calback){
@@ -30,16 +32,17 @@ function CodeEditor(id){
 		Отправка запроса для проверки кода.
 	*/
 	function _sendCode(){
-		data = {"command":"code","id":self.getCode()};
+		data = {"command":"code", id:self.id,"code":self.getCode()};
 		$.ajax({
 			method:'POST',
 			dataType: 'json',
 			data:data,
 			url: 'http://127.0.0.1:5000/game/command/',
 			success: function(data){
-				if(data[status]=="success"){
+				if(data['status']=="success"){
 					results.html('<h4>Задача решена успешно, можете закрыть окно</h4>');
 				}else{
+					let error = data['error']
 					results.html('<h4>Ошибка!</h4><code>'+error+'</code>');
 				}
 			},
