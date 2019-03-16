@@ -1,46 +1,55 @@
 {% extends "bootstrap/base.html" %}
+{% block head %}
+{{super()}}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="{{ url_for('engine.static', filename='tan_engine/css/main.css') }}">
+{% endblock %}
 
 {% block title %}Регистрация{% endblock %}
 {% block content %}
-<div class="container">
- <div class="row">
 
- <div class="col-md-offset-3 col-md-6">
-    <h1>Регистрация</h1>
-    <form action="" method="post">
+<div class="center-block d-flex justify-content-center">
+   <div class = "card align-self-center">
+      <div class="card-header">
+        <h3>Регистрация</h3>
+      </div>
+     <div class="card-body">
+     <form action="" method="post">
         {{ form.hidden_tag() }}
-        <div>
+        <div class="form-group">
             {{ form.username.label }}<br>
-            {{ form.username(size=32) }}<br>
+            {{ form.username(size=32, class_="form-control") }}<br>
             {% for error in form.username.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </div>
-        <div>
+        <div class="form-group">
             {{ form.email.label }}<br>
-            {{ form.email(size=32) }}<br>
+            {{ form.email(size=32, class_="form-control") }}<br>
             {% for error in form.email.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </div>
-        <div>
+        <div class="form-group">
             {{ form.password.label }}<br>
-            {{ form.password(size=32) }}<br>
+            {{ form.password(size=32, class_="form-control") }}<br>
             {% for error in form.password.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </div>
-        <div>
+        <div class="form-group">
             {{ form.password2.label }}<br>
-            {{ form.password2(size=32) }}<br>
+            {{ form.password2(size=32, class_="form-control") }}<br>
             {% for error in form.password2.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </div>
-        <div class = "mt-3" >{{ form.submit() }}</div>
+        <div class = "mt-3" >{{ form.submit(class_="btn btn-success") }}</div>
     </form>
-
-  </div>
+   </div>
   </div>
 </div>
+
+<div class="container">
+ <div class="row">
 {% endblock %}

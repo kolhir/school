@@ -23,10 +23,8 @@ def ajax_command():
 
     elif command == "exercise":
         id = get_id_from_req(request)
-        print("========================",id)
         exercise = get_exercise_by_id(id)
         exercise_json = fill_ex_tamplate(exercise)
-        print(exercise_json)
         return exercise_json
 
     elif command == "code":
@@ -35,14 +33,10 @@ def ajax_command():
         ex = get_exercise_by_id(ex_id)
         print(ex.io_data)
         test = go_test_code(code, ex.io_data)
-        print("CODE ===========",code)
-        print("code ID ======== ", ex_id)
-        print("test ++++++++++++++++", test)
         return str(test).replace("\'",'\"')
 
 @app.route("/game/ajax_test/", methods=['GET', 'POST'])
 def ajax():
-    print("==============")
     # create_scene()
     print(request.form["id"])
     id = request.form["id"]
@@ -59,6 +53,9 @@ def ajax():
 
     return d
     # return d
+@app.route("/")
+def index():
+    return render_template("engine/game.htm")
 
 @app.route("/game")
 @login_required
@@ -95,23 +92,29 @@ def fill_ex_tamplate(exercise):
 
 def go_test_code(code, input_io):
     code_template['Program'] = code
-    res = res_code_template
+    import copy
+    res = copy.deepcopy(res_code_template)
+    from ast import literal_eval
+    input_io = literal_eval(input_io)
+
     if bool(input_io):
         for item in input_io:
             code_template['Input'] = item
             r = requests.post(url, data = code_template)
             d = json.loads(r.text)
-            print("d++++++++++", d)
             if not(d['Errors']):
-                if d['Result'] == input_io[item]:
+                if d['Result'][:len(d['Result'])-1] == input_io[item]:
                     res["status"] = "success"
+                    print(res)
+                    return res
+                else:
+                    res["error_text"] = "Программа не прошла тесты"
+                    res["status"] = "error"
+                    return res
             else:
-
                 res["error_text"] = d['Errors']
-                print("res -------------------",res)
                 res["error_text"] = res["error_text"].replace('\"',"$qv")
                 res["error_text"] = res["error_text"].replace("\'","$qv")
-                print("res -------------------",res)
                 res["status"] = "error"
             return(res)
     else:

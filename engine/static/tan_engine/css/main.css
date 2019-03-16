@@ -1,0 +1,10 @@
+html{
+	height: 100%;
+}
+body{
+	background: url('../back.jpg') repeat;
+	height: 100%;
+}
+.center-block{
+	height: 100%
+}

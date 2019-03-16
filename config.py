@@ -12,7 +12,7 @@ code_template = {
 }
 
 res_code_template ={
-'status':"",
+"status":"",
 "error_text":"",
 }
 class Confiruration(object):

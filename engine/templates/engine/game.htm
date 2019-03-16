@@ -37,7 +37,7 @@
 		"castomInstuctions":{
 			//асинхронная команда, требует "stop" после
 				"code":function(cmd,game){
-				data = {"command":"exercise", "id":"1"}
+				data = {"command":"exercise", "id":cmd}
 				$.ajax({
 					url: 'http://127.0.0.1:5000/game/command/',
 					method:'POST',
@@ -61,7 +61,7 @@
 		}
 	};
 
-	data = {"command":"scene","id":2};
+	data = {"command":"scene","id":1};
 	$.ajax({
 		method:'POST',
 		dataType: 'json',
