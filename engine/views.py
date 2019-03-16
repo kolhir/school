@@ -4,6 +4,7 @@ from flask_login import login_required
 import json
 import  pickle
 from .models import get_scene_by_id, get_exercise_by_id
+from config import url, code_template
 # data = {"command":"scene","id":2};
 # data = {"command":"exercise","id":4};
 # На это рыжий кидает код(опять же еще одна команда)
@@ -28,11 +29,12 @@ def ajax_command():
         return exercise_json
 
     elif command == "code":
-        id = get_id_from_req(request)
+        ex_id = get_id_from_req(request)
         code = get_code_from_req(request)
-
+        ex = get_exercise_by_id(ex_id)
+        # test = go_python_test(code, dict(ex.io_data))
         print("CODE ===========",code)
-        print("code ID ======== ", id)
+        print("code ID ======== ", ex_id)
 
         return "{\"1\":\"1\"}"
 
@@ -40,7 +42,7 @@ def ajax_command():
 def ajax():
     print("==============")
     # create_scene()
-    print(  request.form["id"])
+    print(request.form["id"])
     id = request.form["id"]
     from .models import scene
     s = scene.query.filter_by(id = id).first()
@@ -105,5 +107,12 @@ def fill_ex_tamplate(exercise):
     ex = "{" + ex_template.format(exercise.name,exercise.text,exercise.code) + "}"
     return ex
 
+def go_test_code(code, input_io):
+    data['Program'] = code
+    for item in input_io:
+        data['Intput'] = 0
+        r = requests.post(url, data = code_template)
+        d = json.loads(r.text)
+        return(d)
 # ex_template = "\"name\": \"{}\",\"text\": \"{}\",\"io_data\": \"{}\",\"code\": \"{}\""
 ex_template = "\"name\": \"{}\",\"text\": \"{}\",\"code\": \"{}\""

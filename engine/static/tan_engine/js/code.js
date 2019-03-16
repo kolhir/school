@@ -32,7 +32,7 @@ function CodeEditor(id){
 		Отправка запроса для проверки кода.
 	*/
 	function _sendCode(){
-		data = {"command":"code", id:self.id,"code":self.getCode()};
+		data = {"command":"code", "id":self.id,"code":self.getCode()};
 		$.ajax({
 			method:'POST',
 			dataType: 'json',

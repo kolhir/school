@@ -1,6 +1,16 @@
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
+url = "https://rextester.com/rundotnet/api"
+
+code_template = {
+'LanguageChoiceWrapper' : '24',
+'Program':
+'''
+{}
+''',
+'Input':''
+}
 
 class Confiruration(object):
     DEBUG = True
@@ -8,4 +18,3 @@ class Confiruration(object):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'test_db.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    
