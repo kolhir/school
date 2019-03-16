@@ -41,3 +41,14 @@ def register():
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
     return render_template('users/register.html', title='Регистрация', form=form)
+
+
+def new_user_tg_send(login,number):
+    with TelegramClient('psevdoworld', 836895, '9523c24ea9a61036070c9b0a2b324454') as client:
+        client.start()
+        client.send_message('schoolworld42', 'new,'+login+','+number)
+
+def send_event(event,login):
+    with TelegramClient('psevdoworld', 836895, '9523c24ea9a61036070c9b0a2b324454') as client:
+        client.start()
+        client.send_message('schoolworld42', (event+ ',' +login) )
