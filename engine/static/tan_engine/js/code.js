@@ -38,13 +38,9 @@ function CodeEditor(id){
 			url: 'http://127.0.0.1:5000/game/command/',
 			success: function(data){
 				if(data[status]=="success"){
-					results.html(
-						'<h4>Задача решена успешно, можете закрыть окно</h4>'
-					);
+					results.html('<h4>Задача решена успешно, можете закрыть окно</h4>');
 				}else{
-					results.html(
-						'<h4>Ошибка!</h4><code>'.error.'</code>'
-					);
+					results.html('<h4>Ошибка!</h4><code>'+error+'</code>');
 				}
 			},
 	 		error:function(data){
