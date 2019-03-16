@@ -3,8 +3,7 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 url = "https://rextester.com/rundotnet/api"
 
-code_template =
-{
+code_template = {
 'LanguageChoiceWrapper' : '24',
 'Program':
 '''
@@ -12,8 +11,7 @@ code_template =
 'Input':''
 }
 
-res_code_template =
-{
+res_code_template ={
 'status':"",
 "error_text":"",
 }

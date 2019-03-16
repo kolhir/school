@@ -5,6 +5,7 @@ import json
 import  pickle
 from .models import get_scene_by_id, get_exercise_by_id
 from config import url, code_template, res_code_template
+import requests
 # data = {"command":"scene","id":2};
 # data = {"command":"exercise","id":4};
 # На это рыжий кидает код(опять же еще одна команда)
@@ -32,11 +33,12 @@ def ajax_command():
         ex_id = get_id_from_req(request)
         code = get_code_from_req(request)
         ex = get_exercise_by_id(ex_id)
-        test = go_python_test(code, dict(ex.io_data))
+        print(ex.io_data)
+        test = go_test_code(code, ex.io_data)
         print("CODE ===========",code)
         print("code ID ======== ", ex_id)
-
-        return test
+        print("test ++++++++++++++++", test)
+        return str(test).replace("\'",'\"')
 
 @app.route("/game/ajax_test/", methods=['GET', 'POST'])
 def ajax():
@@ -92,18 +94,24 @@ def fill_ex_tamplate(exercise):
     return ex
 
 def go_test_code(code, input_io):
-    data['Program'] = code
+    code_template['Program'] = code
     res = res_code_template
     if bool(input_io):
         for item in input_io:
-            data['Input'] = item
+            code_template['Input'] = item
             r = requests.post(url, data = code_template)
             d = json.loads(r.text)
+            print("d++++++++++", d)
             if not(d['Errors']):
                 if d['Result'] == input_io[item]:
                     res["status"] = "success"
             else:
+
                 res["error_text"] = d['Errors']
+                print("res -------------------",res)
+                res["error_text"] = res["error_text"].replace('\"',"$qv")
+                res["error_text"] = res["error_text"].replace("\'","$qv")
+                print("res -------------------",res)
                 res["status"] = "error"
             return(res)
     else:
