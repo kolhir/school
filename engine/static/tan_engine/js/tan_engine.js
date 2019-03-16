@@ -115,7 +115,7 @@ function Button(options){
 				ctx.fillStyle = "#999";
 				ctx.fillRect(x, y, w, h);
 				ctx.fillStyle = "black";
-				ctx.font = "12px Comic Sans MS";
+				ctx.font = "13px Comic Sans MS";
 				ctx.fillStyle = "#FFF";
 				printAt(ctx, self.text, x+20, y+25, w, 15);
 			}else{
@@ -124,7 +124,7 @@ function Button(options){
 				ctx.fillStyle = "#555";
 				ctx.fillRect(x, y, w, h);
 				ctx.fillStyle = "black";
-				ctx.font = "12px Comic Sans MS";
+				ctx.font = "13px Comic Sans MS";
 				ctx.fillStyle = "#FFF";
 				printAt(ctx, self.text, x+20, y+25, w, 15);
 			}
@@ -139,7 +139,7 @@ function Button(options){
 			ctx.fillStyle = "#555";
 			ctx.fillRect(x, y, w, h);
 			ctx.fillStyle = "black";
-			ctx.font = "12px Arial";
+			ctx.font = "13px Arial";
 			ctx.fillStyle = "#FFF";
 			printAt(ctx, self.text, x+20, y+25, w, 15);
 		}
