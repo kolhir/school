@@ -19,8 +19,14 @@ function CodeEditor(id){
 	self.getCode=function(){
 		return editor.getValue();
 	}
+	function _specSym(str){
+		return str.replace(/\\n/g, "\n")
+			.replace(/\\t/g, "\t")
+			.replace(/$$qv/g, '"')
+			.replace(/\\'/g, "'");
+	}
 	self.setCode=function(code){
-		code = code.replace(/\\n/g, "\n");
+		code = _specSym(code);
 		return editor.setValue(code);
 	}
 	self.show = function(){
@@ -44,7 +50,7 @@ function CodeEditor(id){
 				if(data['status']=="success"){
 					results.html(outPrfx+'<h4>Задача решена успешно, можете закрыть окно</h4>');
 				}else{
-					let error = data['error'];
+					let error = _specSym(data['error_text']);
 					error = outPrfx+'<h4>Ошибка!</h4><code>'+error+'</code>';
 					results.html(error);
 				}
