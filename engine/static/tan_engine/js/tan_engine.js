@@ -202,7 +202,14 @@ function Bubble(options){
 
 	self.isEnable = true;
 	self.click = function (handler){
-		div.bind('click', handler);
+		div.bind('click', function(event){
+			trgt = event.target;
+		    if(trgt == div[0] 
+		    	|| trgt == content[0]
+		    	|| trgt == header[0]) {
+        		handler();
+    		}
+		});
 	}		
 	self.draw = function(){
 		if(self.isEnable)
@@ -224,7 +231,7 @@ function Bubble(options){
 	}
 	self.print = function(cmd){
 		let color = (cmd['color']?cmd['color']:'red');
-		content.html(cmd['text']);
+		content.html('<p>'+cmd['text']+'</p>');
 		if(color){
 			header.text(cmd['char']).css('color', color);
 		}
