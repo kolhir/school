@@ -16,6 +16,8 @@
 {% block scripts %}
 {{ super() }}
 <script src="{{ url_for('engine.static', filename='tan_engine/js/tan_engine.js') }}"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ace.js"></script>
+<script src="{{ url_for('engine.static', filename='tan_engine/js/code.js') }}"></script>
 
 <script>
 	var options={
@@ -49,9 +51,9 @@
 						editor.setCode(data['code']);
 						editor.show();
 					},
-					/* error:function(data){
-						alert(data['name'],data['text'],data["code"])
-					} */
+					 error:function(data){
+						alert(data['name'],data['text'],data["code"]);
+					}
 				});
 			}
 		}
@@ -66,12 +68,14 @@
 		success: function(data){
 			var game = new TanEngine(options);
 			game.start(data);
+		},
+ 		error:function(data){
+			alert('Ошибка');
 		}
 	});
 </script>
 
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ace.js"></script>
-<script src="{{ url_for('engine.static', filename='tan_engine/js/code.js') }}"></script>
+
 {% endblock %}
 
 {% block content %}
