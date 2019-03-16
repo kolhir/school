@@ -1,6 +1,10 @@
 function CodeEditor(id){
 	let self = this;
 	let editor = ace.edit(id+"-editor");
+	editor.setOptions({
+	  fontFamily: "tahoma",
+	  fontSize: "13pt"
+	});
 	self.editor = editor;
 	//id задания
 	self.id;

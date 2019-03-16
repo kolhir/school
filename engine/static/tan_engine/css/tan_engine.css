@@ -4,9 +4,6 @@
   border: 4px double black;
   border-radius: 30px;
 }
-body{
-	font-size: 12pt;
-}
 .bubble{
 	margin-left:auto;
 	margin-right:auto;
@@ -15,6 +12,7 @@ body{
 	background: linear-gradient(to top left, powderblue, pink);
 	opacity: 0.9;
 	overflow:hidden;
+	font-size: 14pt;
 }
 .bubble-content{
 	display: block;
