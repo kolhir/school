@@ -33,7 +33,7 @@
 				"code":function(cmd,game){
 				data = {"command":"exercise", "id":cmd}
 				$.ajax({
-					url: 'http://127.0.0.1:5000/game/command/',
+					url: '/game/command/',
 					method:'POST',
 					dataType:'json',
 				  data:data,
@@ -64,7 +64,7 @@
 		method:'POST',
 		dataType: 'json',
 		data:data,
-		url: 'http://127.0.0.1:5000/game/command/',
+		url: '/game/command/',
 		success: function(data){
 			var game = new TanEngine(options);
 			game.start(data);
