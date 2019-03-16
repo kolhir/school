@@ -9,7 +9,7 @@ function CodeEditor(id){
 	results= $("#"+id+"-results");
 	footerBtns = $("#"+id+"-buttons");
 	footerProgress = $("#"+id+"-progress");
-	
+
 	sendBtn = $('#'+id+"-send").bind("click",_sendCode);
 	editor.setTheme("ace/theme/monokai");
 	editor.getSession().setMode("ace/mode/python");
@@ -62,7 +62,7 @@ function CodeEditor(id){
 			method:'POST',
 			dataType: 'json',
 			data:data,
-			url: 'http://127.0.0.1:5000/game/command/',
+			url: '/game/command/',
 			success: function(data){
 				if(data['status']=="success"){
 					results.html(outPrfx+'<h4>Задача решена успешно, можете закрыть окно</h4>');
