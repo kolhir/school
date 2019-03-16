@@ -139,7 +139,7 @@ function Button(options){
 			ctx.fillStyle = "#555";
 			ctx.fillRect(x, y, w, h);
 			ctx.fillStyle = "black";
-			ctx.font = "13px Arial";
+			ctx.font = "13px Comic Sans MS";
 			ctx.fillStyle = "#FFF";
 			printAt(ctx, self.text, x+20, y+25, w, 15);
 		}
